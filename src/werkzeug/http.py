@@ -58,7 +58,7 @@ _accept_re = re.compile(
       [^\s;,]+              # type/subtype
       (?:[ \t]*;[ \t]*      # ";"
         (?:                 # parameter non-capturing-parenthesis
-          [^\s;,q][^\s;,]*  # token that doesn't start with "q"
+          [^\s;,q][^;,]*    # token that doesn't start with "q"
         |                   # or
           q[^\s;,=][^\s;,]* # token that is more than just "q"
         )
