@@ -400,37 +400,13 @@ def test_type_forcing():
     pytest.raises(TypeError, SpecialResponse.force_type, wsgi_application)
 
 
-def test_mimetype_quoted_parameters():
-    """
-    As per RFC-2045 Section 5.2, mime-type parameters can be quoted
-    """
-    request = wrappers.Request(
-        {
-            "HTTP_ACCEPT": (
-                'text/plain; charset=utf8,'
-                'text/plain; charset="latin-1"; q=0.9,'
-                'text/plain; charset="ascii"; q=0.8,'
-                'custom/type; charset="value with space"; q=0.7,'
-                '*/*; q=0.5'
-            )
-        }
-    )
-    assert request.accept_mimetypes == MIMEAccept(
-        [
-            ('text/plain; charset=utf8', 1),
-            ('text/plain; charset="latin-1"', 0.9),
-            ('text/plain; charset="ascii"', 0.8),
-            ('custom/type; charset="value with space"', 0.7),
-            ('*/*', 0.5)
-        ]
-    )
-
-
 def test_accept_mixin():
     request = wrappers.Request(
         {
             "HTTP_ACCEPT": "text/xml,application/xml,application/xhtml+xml,"
-            "text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+            "text/html;q=0.9,text/plain;q=0.8,image/png,"
+            "custom/type; charset=\"value with space\"; q=0.7,"
+            "*/*;q=0.5",
             "HTTP_ACCEPT_CHARSET": "ISO-8859-1,utf-8;q=0.7,*;q=0.7",
             "HTTP_ACCEPT_ENCODING": "gzip,deflate",
             "HTTP_ACCEPT_LANGUAGE": "en-us,en;q=0.5",
@@ -444,6 +420,7 @@ def test_accept_mixin():
             ("application/xhtml+xml", 1),
             ("text/html", 0.9),
             ("text/plain", 0.8),
+            ('custom/type; charset="value with space"', 0.7),
             ("*/*", 0.5),
         ]
     )
